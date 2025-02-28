@@ -1,0 +1,68 @@
+openapi: 3.0.0
+info:
+  title: News Scraper API
+  description: API para extrair e listar notícias de diversos sites.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Servidor Local
+  - url: https://api.meusite.com
+    description: Produção
+
+paths:
+  /news:
+    get:
+      summary: Retorna as notícias extraídas
+      description: Lista todas as notícias armazenadas no banco de dados.
+      parameters:
+        - name: source
+          in: query
+          description: Filtra notícias por fonte
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Número máximo de notícias a serem retornadas
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Lista de notícias retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/News"
+  /scrape:
+    post:
+      summary: Inicia o web scraping manualmente
+      description: Dispara o scraper para coletar notícias e salvar no banco.
+      responses:
+        "200":
+          description: Scraping iniciado com sucesso
+        "500":
+          description: Erro ao iniciar scraping
+
+components:
+  schemas:
+    News:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "abc123"
+        title:
+          type: string
+          example: "Deno lança nova versão com suporte a..."
+        source:
+          type: string
+          example: "TechCrunch"
+        url:
+          type: string
+          example: "https://techcrunch.com/deno-news"
+        published_at:
+          type: string
+          format: date-time
+          example: "2025-02-27T12:00:00Z"
